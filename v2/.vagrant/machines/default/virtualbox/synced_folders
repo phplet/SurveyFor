@@ -1,0 +1,1 @@
+{"virtualbox":{"/home/vagrant/v2":{"type":null,"mount_options":[],"guestpath":"/home/vagrant/v2","hostpath":"/Applications/mampstack-5.6.23-0/apache2/htdocs/SurveyFor/v2","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/Applications/mampstack-5.6.23-0/apache2/htdocs/SurveyFor/v2","disabled":false,"__vagrantfile":true}}}
