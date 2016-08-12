@@ -10,6 +10,7 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::auth();
 
 Route::pattern('id', '[0-9]+');
 
@@ -17,58 +18,44 @@ Route::get('/', array(
     'as'=>'default', 'uses' =>'HomeController@index'
 ));
 
-Route::get('login', array(
-    'as'=>'login', 'uses' =>'HomeController@login'
-));
-
-Route::get('users/register', array(
-    'as'=>'register',
-    'uses'=>'UserController@register'
-));
-
-Route::get('users/logout', array(
-    'uses'=>'UserController@getLogout'
-));
-
-Route::get('survey/publish/{id}', array(
-    'uses'=>'SurveyController@publish'
-));
-
-Route::get('survey/unpublish/{id}', array(
-    'uses'=>'SurveyController@unpublish'
-));
-
-Route::get('survey/delete/{id}', array(
-    'uses'=>'SurveyController@delete'
-));
-
-Route::post('survey/view/{id}', array(
-    'uses'=>'SurveyController@save_survey'
-));
-
-Route::get('survey/view/{id}', array(
-    'uses'=>'SurveyController@view_survey'
-));
-
-Route::post('users/register', array(
-    'uses'=>'UserController@create'
-));
-
-Route::post('login', array(
-    'uses'=>'UserController@login'
-));
-Route::post('survey/create', array(
-    'uses'=>'SurveyController@insert'
-));
-Route::post('survey/add_question/{id}', array(
-    'uses'=>'SurveyController@insert_question'
-));
-
 Route::get('survey/thank-you/{id}', array(
     'uses'=>'SurveyController@thankyou'
 ));
 
 Route::group(['middleware' => 'auth'], function () {
+
+    Route::get('survey/create', array(
+        'as'=>'createsurvey',
+        'uses'=>'SurveyController@create'
+    ));
+
+    Route::post('survey/create', array(
+        'uses'=>'SurveyController@insert'
+    ));
+
+    Route::get('survey/publish/{id}', array(
+        'uses'=>'SurveyController@publish'
+    ));
+
+    Route::get('survey/unpublish/{id}', array(
+        'uses'=>'SurveyController@unpublish'
+    ));
+
+    Route::get('survey/delete/{id}', array(
+        'uses'=>'SurveyController@delete'
+    ));
+
+    Route::post('survey/view/{id}', array(
+        'uses'=>'SurveyController@save_survey'
+    ));
+
+    Route::get('survey/view/{id}', array(
+        'uses'=>'SurveyController@view_survey'
+    ));
+
+    Route::post('survey/add_question/{id}', array(
+        'uses'=>'SurveyController@insert_question'
+    ));
 
     Route::get('survey/add_question/{id}', array(
         'as'=>'add_question',
@@ -80,14 +67,7 @@ Route::group(['middleware' => 'auth'], function () {
         'uses'=>'UserController@profile'
     ));
 
-    Route::get('survey/create', array(
-        'as'=>'createsurvey',
-        'uses'=>'SurveyController@create'
-    ));
-
     Route::get('survey/settings/{id}', array(
         'uses'=>'SurveyController@settings'
     ));
 });
-
-Route::auth();

@@ -32,4 +32,9 @@ class Question extends Model {
 		return Validator::make($data, static::$rule_two,$messages);
 	}
 
+    public function survey()
+    {
+        return $this->belongsTo('App\Survey', 'the_survey_id');
+    }
+
 }
