@@ -2,32 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use App\Survey;
+use Illuminate\Support\Facades\Auth;
+use Validator;
+use Illuminate\Http\Request;
+
 class SurveyController extends BaseController {
 
 	public function create()
 	{
-		return View::make('survey.create',  array(
-			'title' => 'Create new Survey'
-		));
+        return view('survey.create', ['title' => 'Create new Survey']);
 	}
 
-	public function insert()
+	public function insert(Request $request)
 	{
 
-		$validator = Survey::validate(Input::all());
-		$messages = $validator->messages();
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:60',
+            'description' => 'required|max:300'
+        ]);
+
 		if ($validator->fails()) {
-			return Redirect::route('createsurvey')
+		    return redirect()->route('createsurvey')
 				->withErrors($validator)
 				->withInput();
 		}
 		else{
 			Survey::create(array(
 				'user_id' => Auth:: user()->id,
-				'title' => Input::get('title'),
-				'description' => Input::get('description')
+				'title' => $request->input('title'),
+				'description' => $request->input('description')
 			));
-			return Redirect::route('profile');
+            return redirect()->route('profile');
 		}
 	}
 

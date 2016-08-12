@@ -2,19 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Survey;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class UserController extends BaseController {
 
 	public function profile()
-	{	
-		$survey_list = DB::table('surveys')->where('user_id', '=', Auth::user()->id)->get();
-		$survey_count_all = DB::table('surveys')->count();
-		$survey_count_notpublished = DB::table('surveys')->where('status', '=', 0)->count();
-		$survey_count_published = DB::table('surveys')->where('status', '=', 1)->count();
-		$survey_count_unpublished = DB::table('surveys')->where('status', '=', 2)->count();
-        return view('users.profile', compact('survey_list', 'survey_count_all', 'survey_count_notpublished', 'survey_count_published', 'survey_count_unpublished'));
+	{
+        $surveys = Survey::where('user_id', '=', Auth::user()->id)->with('questions')->get();
+        $group_by_status = $surveys->groupBy('status');
+        $counts = collect([
+            "all" => $surveys->count(),
+            "published" => $group_by_status->get(1)->count(),
+            "unpublished" => $group_by_status->get(2)->count(),
+            "notpublished" => $group_by_status->get(0)->count()
+        ]);
+
+        return view('users.profile', compact('surveys', 'counts'));
 	}
 
 }
