@@ -20,7 +20,7 @@
         @endforeach
       @endif
       <h1>Add Question</h1>
-      {{Form::open();}}
+      {{Form::open()}}
         <div class="form-group">
         @if(Session::has('message') && Session::has('class'))
           <div class="alert {{Session::get('class')}} alert-dismissable">
@@ -48,7 +48,7 @@
         <div class="form-group">
           <input type="submit" class="form-control" id="submit_button">
         </div>
-      {{Form::close();}}
+      {{Form::close()}}
     </div>
   </div>
 </div>

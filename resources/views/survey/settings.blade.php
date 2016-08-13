@@ -7,9 +7,9 @@
     <div class="col-md-12">
       <!--breadcrumbs start -->
       <ul class="breadcrumb">
-          <li>{{ HTML::link('/', 'Home') }}</li>
+          <li>{{ link_to('/', 'Home') }}</li>
           @if($survey->status === 0)
-            <li>{{ HTML::link('/survey/add_question/'.$survey->survey_id, 'Add Question') }}</li>
+            <li>{{ link_to('/survey/add_question/'.$survey->survey_id, 'Add Question') }}</li>
           @endif
       </ul>
       <!--breadcrumbs end -->
@@ -66,7 +66,7 @@
                                   @endif
                                 @endforeach
                                 @if($questions->question_type == "radio")
-                                  <?php 
+                                  <?php
                                     $theoption = json_decode($questions->option_name);
                                     $chart_data = array();
                                   ?>
