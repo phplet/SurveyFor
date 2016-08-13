@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Question;
 use App\Survey;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Validator;
 use Illuminate\Http\Request;
 
@@ -68,31 +70,28 @@ class SurveyController extends BaseController {
 			->with('class', 'alert-success');
 	}
 
-	public function add_question($id)
+	public function add_question()
 	{
-		return View::make('survey.addquestion',  array(
-			'title' => 'Add question to your survey'
-		));
+        return view('survey.addquestion', ['title' => 'Add question to your survey']);
 	}
 
-	public function insert_question($id)
+	public function insert_question(Request $request, $id)
 	{
-		$validator = Question::validate(Input::all());
-		$messages = $validator->messages();
+		$validator = Question::validate($request->all());
 		if ($validator->fails()) {
-			Input::flashOnly('question');
-			return Redirect::to('survey/add_question/'.$id)
+			$request->flashOnly('question');
+			return redirect('survey/add_question/'.$id)
 				->withErrors($validator);
 		}
 		else{
 			Question::create(array(
 				'the_survey_id' => $id,
-				'question' => Input::get('question'),
-				'question_type' => Input::get('question_type'),
-				'option_name' => json_encode(Input::get('option_name'),JSON_FORCE_OBJECT)
+				'question' => $request->get('question'),
+				'question_type' => $request->get('question_type'),
+				'option_name' => json_encode($request->get('option_name'),JSON_FORCE_OBJECT)
 			));
-			return Redirect::to('survey/add_question/'.$id)
-				->with('message', 'Your question has been added succesfully. Add another one or go back home')
+			return redirect('survey/add_question/'.$id)
+				->with('message', 'Your question has been added successfully. Add another one or go back home')
 				->with('class', 'alert-success');
 		}
 	}
@@ -197,18 +196,14 @@ class SurveyController extends BaseController {
 	}
 
 	public function settings($id)
-	{	
-		$survey = DB::table('surveys')
-			->where('survey_id', '=', $id)->first();
+	{
+		$survey = Survey::find($id);
 		$question = DB::table('questions')
 			->where('the_survey_id', '=', $id)->get();
 		$answer = DB::table('answers')
 			->where('answer_survey_id', '=', $id)->get();
-		return View::make('survey.settings')
-			->with('title', 'Settings')
-			->with('question', $question)
-			->with('answer', $answer)
-			->with('survey', $survey);
+		return view('survey.settings')
+			->with(['title' => 'Settings', 'question' => $question, 'answer' => $answer, 'survey' => $survey]);
 		
 	}
 

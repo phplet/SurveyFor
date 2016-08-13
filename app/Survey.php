@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 class Survey extends Model {
 
 	protected $table = "surveys";
+    protected $primaryKey = "survey_id";
 	protected $fillable = array('user_id','title', 'description', 'status');
 
     public function questions()
