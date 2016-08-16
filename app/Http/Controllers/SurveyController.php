@@ -40,33 +40,47 @@ class SurveyController extends BaseController {
 
 	public function publish($id)
 	{
-		DB::table('surveys')
-            ->where('survey_id', $id)
-            ->update(array('status' => 1));
+		$survey = Survey::find($id);
+        $survey->status = 1;
 
-		return Redirect::route('profile')
-			->with('message', 'Your Survey has been sucessfully published')
-			->with('class', 'alert-success');
+        if ($survey->save()) {
+            return redirect()->route('profile')
+                ->with('message', 'Your Survey has been successfully published')
+                ->with('class', 'alert-success');
+        }else {
+            return redirect()->route('profile')
+                ->with('message', 'An error occurred. Survey not published.')
+                ->with('class', 'alert-error');
+        }
 	}
 
 	public function unpublish($id)
 	{
-		DB::table('surveys')
-            ->where('survey_id', $id)
-            ->update(array('status' => 2));
+        $survey = Survey::find($id);
+        $survey->status = 2;
 
-		return Redirect::route('profile')
-			->with('message', 'Your Survey has been sucessfully Unpublished')
-			->with('class', 'alert-success');
+        if ($survey->save()) {
+            return redirect()->route('profile')
+                ->with('message', 'Your Survey has been successfully Unpublished')
+                ->with('class', 'alert-success');
+        }else {
+            return redirect()->route('profile')
+                ->with('message', 'An error occurred. Survey not unnpublished.')
+                ->with('class', 'alert-error');
+        }
 	}
 
 	public function delete($id)
 	{
-
-		DB::table('surveys')->where('survey_id', '=', $id)->delete();
-		return Redirect::route('profile')
-			->with('message', 'Your Survey has been sucessfully deleted')
-			->with('class', 'alert-success');
+        if(Survey::destroy($id)) {
+            return redirect()->route('profile')
+                ->with('message', 'Your Survey has been successfully deleted')
+                ->with('class', 'alert-success');
+        }else {
+            return redirect()->route('profile')
+                ->with('message', 'An error occurred. Survey not deleted.')
+                ->with('class', 'alert-error');
+        }
 	}
 
 	public function add_question()
