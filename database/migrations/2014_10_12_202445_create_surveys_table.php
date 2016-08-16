@@ -13,7 +13,7 @@ class CreateSurveysTable extends Migration {
 	public function up()
 	{
 		Schema::create('surveys', function($table){
-			$table->increments('survey_id');
+			$table->increments('id');
 			$table->integer('user_id')->unsigned();
 			$table->string('title');
 			$table->string('description');

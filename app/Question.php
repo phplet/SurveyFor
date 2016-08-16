@@ -6,7 +6,7 @@ use Validator;
 
 class Question extends Model {
 	protected $table = "questions";
-	protected $fillable = array('the_survey_id','question', 'question_type', 'option_name');
+	protected $fillable = array('question', 'question_type', 'option_name');
 	public static $rules = array(
 		'question' => 'required',
 		'question_type' => 'required|in:text,textarea,checkbox,radio'
@@ -35,7 +35,7 @@ class Question extends Model {
 
     public function survey()
     {
-        return $this->belongsTo('App\Survey', 'the_survey_id');
+        return $this->belongsTo('App\Survey');
     }
 
 }

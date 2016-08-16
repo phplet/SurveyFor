@@ -13,12 +13,12 @@ class CreateQuestionsTable extends Migration {
 	public function up()
 	{
 		Schema::create('questions', function($table){
-			$table->increments('question_id');
-			$table->integer('the_survey_id')->unsigned();
+			$table->increments('id');
+			$table->integer('survey_id')->unsigned();
 			$table->string('question');
 			$table->string('question_type');
 			$table->string('option_name')->nullable();
-			$table->foreign('the_survey_id')->references('survey_id')->on('surveys')->onDelete('cascade');
+			$table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
 			$table->timestamps();
 		});
 	}

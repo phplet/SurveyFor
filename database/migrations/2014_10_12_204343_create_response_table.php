@@ -13,11 +13,11 @@ class CreateResponseTable extends Migration {
 	public function up()
 	{
 		Schema::create('answers', function($table){
-			$table->increments('answer_id');
-			$table->integer('answer_survey_id')->unsigned();
+			$table->increments('id');
+			$table->integer('survey_id')->unsigned();
 			$table->string('respondent')->nullable();
 			$table->string('answer');
-			$table->foreign('answer_survey_id')->references('survey_id')->on('surveys')->onDelete('cascade');
+			$table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
 			$table->timestamps();
 		});
 	}

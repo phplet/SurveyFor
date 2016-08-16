@@ -6,12 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 class Survey extends Model {
 
 	protected $table = "surveys";
-    protected $primaryKey = "survey_id";
-	protected $fillable = array('user_id','title', 'description', 'status');
+	protected $fillable = array('title', 'description', 'status');
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 
     public function questions()
     {
-        return $this->hasMany('App\Question', 'question_id', 'survey_id');
+        return $this->hasMany('App\Question');
     }
 
 }
