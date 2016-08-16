@@ -30,11 +30,10 @@ class SurveyController extends BaseController {
 				->withInput();
 		}
 		else{
-			Survey::create(array(
-				'user_id' => Auth:: user()->id,
-				'title' => $request->input('title'),
-				'description' => $request->input('description')
-			));
+		    Auth::user()->surveys()->save(new Survey([
+                'title' => $request->input('title'),
+                'description' => $request->input('description')
+            ]));
             return redirect()->route('profile');
 		}
 	}
@@ -77,6 +76,7 @@ class SurveyController extends BaseController {
 
 	public function insert_question(Request $request, $id)
 	{
+        $survey = Survey::find($id);
 		$validator = Question::validate($request->all());
 		if ($validator->fails()) {
 			$request->flashOnly('question');
@@ -84,12 +84,11 @@ class SurveyController extends BaseController {
 				->withErrors($validator);
 		}
 		else{
-			Question::create(array(
-				'the_survey_id' => $id,
-				'question' => $request->get('question'),
-				'question_type' => $request->get('question_type'),
-				'option_name' => json_encode($request->get('option_name'),JSON_FORCE_OBJECT)
-			));
+            $survey->questions()->save(new Question([
+                'question' => $request->get('question'),
+                'question_type' => $request->get('question_type'),
+                'option_name' => json_encode($request->get('option_name'),JSON_FORCE_OBJECT)
+            ]));
 			return redirect('survey/add_question/'.$id)
 				->with('message', 'Your question has been added successfully. Add another one or go back home')
 				->with('class', 'alert-success');
@@ -197,13 +196,11 @@ class SurveyController extends BaseController {
 
 	public function settings($id)
 	{
-		$survey = Survey::find($id);
-		$question = DB::table('questions')
-			->where('the_survey_id', '=', $id)->get();
+		$survey = Survey::find($id)->with('questions')->first();
 		$answer = DB::table('answers')
-			->where('answer_survey_id', '=', $id)->get();
+			->where('survey_id', '=', $id)->get();
 		return view('survey.settings')
-			->with(['title' => 'Settings', 'question' => $question, 'answer' => $answer, 'survey' => $survey]);
+			->with(['title' => 'Settings', 'answer' => $answer, 'survey' => $survey]);
 		
 	}
 

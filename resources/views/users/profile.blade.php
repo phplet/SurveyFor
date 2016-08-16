@@ -39,20 +39,20 @@
                         @foreach($surveys as $survey)
                             <div class="well">
                                 <h4><a target="_blank"
-                                       href="/survey/settings/{{ $survey->survey_id }}">{{ $survey->title }}</a></h4>
+                                       href="/survey/settings/{{ $survey->id }}">{{ $survey->title }}</a></h4>
                                 <p>{{ $survey->description }}</p>
                                 <hr class="hr"/>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default"><a
-                                                href="/survey/view/{{ $survey->survey_id }}" target="_blank">View in
+                                                href="/survey/view/{{ $survey->id }}" target="_blank">View in
                                             Browser</a></button>
                                     @if ($survey->status === 1)
                                         <button type="button" class="btn btn-default"><a
-                                                    href="/survey/unpublish/{{ $survey->survey_id }}">Unpublish</a>
+                                                    href="/survey/unpublish/{{ $survey->id }}">Unpublish</a>
                                         </button>
                                     @elseif ($survey->status === 0)
                                         <button type="button" class="btn btn-default"><a
-                                                    href="/survey/publish/{{ $survey->survey_id }}">publish</a></button>
+                                                    href="/survey/publish/{{ $survey->id }}">publish</a></button>
                                     @else
                                     @endif
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">More Actions<span class="caret"></span>
@@ -67,9 +67,9 @@
                                             <li><a href="#">Taken<span class="badge pull-right">0</span></a></li>
                                         @endif
                                         <li class="divider"></li>
-                                        <li><a href="/survey/delete/{{ $survey->survey_id }}">Delete Survey</a></li>
+                                        <li><a href="/survey/delete/{{ $survey->id }}">Delete Survey</a></li>
                                         @if ($survey->status === 0)
-                                            <li><a href="/survey/add_question/{{ $survey->survey_id }}">Add Question</a>
+                                            <li><a href="/survey/add_question/{{ $survey->id }}">Add Question</a>
                                             </li>
                                         @endif
                                     </ul>
