@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Answer;
 use App\Question;
 use App\Survey;
 use Illuminate\Support\Facades\Auth;
@@ -65,7 +66,7 @@ class SurveyController extends BaseController {
                 ->with('class', 'alert-success');
         }else {
             return redirect()->route('profile')
-                ->with('message', 'An error occurred. Survey not unnpublished.')
+                ->with('message', 'An error occurred. Survey not unpublished.')
                 ->with('class', 'alert-error');
         }
 	}
@@ -109,19 +110,17 @@ class SurveyController extends BaseController {
 		}
 	}
 
-	public function view_survey($id)
+	public function view_survey(Request $request, $id)
 	{
-
-		$survey = DB::table('surveys')
-			->where('survey_id', '=', $id)
-			->where('status', '=', 1)->first();
+        $survey = Survey::where('id', '=', $id)
+            ->where('status', '=', 1)->first();
 		if (count($survey) != 0) {
-			$question = DB::table('questions')->where('the_survey_id', '=', $survey->survey_id)->paginate(2);
-			if ( Input::get('page', 1) > $question->getLastPage() )
+            $question = $survey->questions()->paginate(1);
+			if ( $request->get('page', 1) > $question->lastPage() )
 			{
 				if (Auth::check())
 				{
-				    return Redirect::to('users/profile')
+				    return redirect('users/profile')
 						->with('message', '1. incorrect link. 2. Check to be sure there are questions for this survey.')
 						->with('class', 'alert-danger')
 						->with('title', 'Welcome to SurveyFor');
@@ -129,14 +128,14 @@ class SurveyController extends BaseController {
 			    	App::abort(404);
 				}
 			}else{
-				return View::make('survey.view')
+				return view('survey.view')
 					->with('title', $survey->title)
 					->with('survey', $survey)
 					->with('question', $question);
 			}
 		}
 		else{
-			return View::make('survey.view')
+			return view('survey.view')
 				->with('title', "Survey Not Found")
 				->with('survey', $survey);
 		}
@@ -144,65 +143,61 @@ class SurveyController extends BaseController {
 	}
 
 	public function thankyou($id){
-		return View::make('survey.thank-you',  array(
+		return view('survey.thank-you',  array(
 			'title' => 'Thank you for taking the survey | Powered by surveyFor'
 		));
 
 	}
 
-	public function save_survey($id)
+	public function save_survey(Request $request, $id)
 	{
-		$page = Input::get('page');
-		$finish = Input::get('finish');
-		$submitted_data = json_encode(Input::all(),JSON_FORCE_OBJECT);
-		$validator = Question::validate_two(Input::all());
-		$messages = $validator->messages();
+		$page = $request->get('page');
+		$finish = $request->get('finish');
+		$validator = Question::validate_two($request->all());
 		if ($validator->fails()) {
-			foreach (Input::all() as $key => $value) {
+			foreach ($request->all() as $key => $value) {
 				if (is_array($value)) {
 					$current_key = $key;
 				}
 			}
 			if ($finish==0) {
 				if (empty($current_key)) {
-					return Redirect::to('survey/view/'.$id.'?page='.$page)
+					return redirect('survey/view/'.$id.'?page='.$page)
 					->withInput()
 					->withErrors($validator);
 				}else{
-					return Redirect::to('survey/view/'.$id.'?page='.$page)
+					return redirect('survey/view/'.$id.'?page='.$page)
 					->withErrors($validator);
 				}
 				
 			}else{
 				if (empty($current_key)) {
-					return Redirect::to('survey/view/'.$id.'?page='.$page)
+					return redirect('survey/view/'.$id.'?page='.$page)
 					->withInput()
 					->withErrors($validator);
 				}else{
-					return Redirect::to('survey/view/'.$id.'?page='.$page)
+					return redirect('survey/view/'.$id.'?page='.$page)
 					->withErrors($validator);
 				}
 				
 			}
 		}else{
-			$previous_response = DB::table('answers')
-				->where('answer_survey_id', '=', $id)->first();
+		    $survey = Survey::find($id);
+			$previous_response = $survey->answers()->first();
+            $new_response = $request->except('_token','page','finish');
 			if (count($previous_response) != 0) {
-				//$response_value = array();
 				$response_value = json_decode($previous_response->answer, true);
-				$merge = array_merge($response_value, Input::except('_token','page','finish'));
-				DB::table('answers')->where('answer_survey_id', '=', $id)->update(array('answer' => json_encode($merge,JSON_FORCE_OBJECT)));
+				$updated_response = array_merge($response_value, $new_response);
+                $previous_response->answer = json_encode($updated_response,JSON_FORCE_OBJECT);
+                $previous_response->save();
 			}else{
-				Answer::create(array(
-					'answer_survey_id' => $id,
-					'answer' => json_encode(Input::except('_token','page','finish'),JSON_FORCE_OBJECT)
-				));
+			    $survey->answers()->save(new Answer(['answer' => json_encode($new_response,JSON_FORCE_OBJECT)]));
 			}
 			if ($finish==0) {
-				return Redirect::to('survey/view/'.$id.'?page='.($page+1));
+				return redirect('survey/view/'.$id.'?page='.($page+1));
 
 			}else{
-				return Redirect::to('survey/thank-you/'.$id);
+				return redirect('survey/thank-you/'.$id);
 			}
 		}
 		
