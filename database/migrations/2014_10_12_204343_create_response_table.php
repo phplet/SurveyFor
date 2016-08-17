@@ -16,7 +16,7 @@ class CreateResponseTable extends Migration {
 			$table->increments('id');
 			$table->integer('survey_id')->unsigned();
 			$table->string('respondent')->nullable();
-			$table->string('answer');
+			$table->longText('answer');
 			$table->foreign('survey_id')->references('id')->on('surveys')->onDelete('cascade');
 			$table->timestamps();
 		});
