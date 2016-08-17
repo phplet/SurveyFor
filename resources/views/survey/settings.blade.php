@@ -46,10 +46,10 @@
                           <div class="row">
                             <div class="col-md-6">
                               <ul class="list-group">
-                                @foreach ($answer as $answers)
+                                @foreach ($survey->answers as $answer)
                                   @if ($question->question_type == "text")
                                     <?php 
-                                      $new_answer = json_decode($answers->answer); 
+                                      $new_answer = json_decode($answer->answer);
                                       $concat = 'question'.$question->id;
                                     ?>
                                       <li class="list-group-item">
@@ -57,7 +57,7 @@
                                       </li>
                                   @elseif ($question->question_type == "textarea")
                                     <?php 
-                                      $new_answer = json_decode($answers->answer); 
+                                      $new_answer = json_decode($answer->answer);
                                       $concat = 'question'.$question->id;
                                     ?>
                                     <li class="list-group-item">
@@ -72,9 +72,9 @@
                                   ?>
                                   @foreach ($theoption as $key => $value)
                                     <?php $key = 0; ?>
-                                    @foreach ($answer as $answers)
+                                    @foreach ($survey->answers as $answer)
                                       <?php 
-                                        $new_answer = json_decode($answers->answer); 
+                                        $new_answer = json_decode($answer->answer);
                                         $concat = 'question'.$question->id;
                                         $value_check = $new_answer->$concat;
                                       ?>
@@ -107,9 +107,9 @@
                                   ?>
                                   @foreach ($theoption as $key => $value)
                                     <?php $key = 0; ?>
-                                    @foreach ($answer as $answers)
+                                    @foreach ($survey->answers as $answer)
                                       <?php 
-                                        $new_answer = json_decode($answers->answer); 
+                                        $new_answer = json_decode($answer->answer);
                                         $concat = 'question'.$question->id;
                                         $value_check = $new_answer->$concat;
                                       ?>

@@ -205,11 +205,9 @@ class SurveyController extends BaseController {
 
 	public function settings($id)
 	{
-		$survey = Survey::find($id)->with('questions')->first();
-		$answer = DB::table('answers')
-			->where('survey_id', '=', $id)->get();
+		$survey = Survey::find($id);
 		return view('survey.settings')
-			->with(['title' => 'Settings', 'answer' => $answer, 'survey' => $survey]);
+			->with(['title' => 'Settings', 'survey' => $survey]);
 		
 	}
 
