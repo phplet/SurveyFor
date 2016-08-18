@@ -45,14 +45,6 @@ Route::group(['middleware' => 'auth'], function () {
         'uses'=>'SurveyController@delete'
     ));
 
-    Route::post('survey/view/{id}', array(
-        'uses'=>'SurveyController@save_survey'
-    ));
-
-    Route::get('survey/view/{id}', array(
-        'uses'=>'SurveyController@view_survey'
-    ));
-
     Route::post('survey/add_question/{id}', array(
         'uses'=>'SurveyController@insert_question'
     ));
@@ -71,3 +63,11 @@ Route::group(['middleware' => 'auth'], function () {
         'uses'=>'SurveyController@settings'
     ));
 });
+
+Route::post('survey/view/{id}', array(
+    'uses'=>'SurveyController@save_survey'
+));
+
+Route::get('survey/view/{id}', array(
+    'uses'=>'SurveyController@view_survey'
+));
