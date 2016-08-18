@@ -6,13 +6,13 @@ use App\Answer;
 use App\Question;
 use App\Survey;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cookie;
 use Validator;
 use Illuminate\Http\Request;
 
 class SurveyController extends BaseController {
 
-	public function create()
+	public function create(Request $request)
 	{
         return view('survey.create', ['title' => 'Create new Survey']);
 	}
@@ -128,6 +128,9 @@ class SurveyController extends BaseController {
 			    	App::abort(404);
 				}
 			}else{
+			    if (!$request->cookie('survey_for_view_user')) {
+                    Cookie::queue(Cookie::make('survey_for_view_user', md5(uniqid(rand(), true)), 1440));
+                }
 				return view('survey.view')
 					->with('title', $survey->title)
 					->with('survey', $survey)
@@ -183,7 +186,7 @@ class SurveyController extends BaseController {
 			}
 		}else{
 		    $survey = Survey::find($id);
-			$previous_response = $survey->answers()->first();
+			$previous_response = $survey->answers()->where('respondent', $request->cookie('survey_for_view_user'))->first();
             $new_response = $request->except('_token','page','finish');
 			if (count($previous_response) != 0) {
 				$response_value = json_decode($previous_response->answer, true);
@@ -191,12 +194,16 @@ class SurveyController extends BaseController {
                 $previous_response->answer = json_encode($updated_response,JSON_FORCE_OBJECT);
                 $previous_response->save();
 			}else{
-			    $survey->answers()->save(new Answer(['answer' => json_encode($new_response,JSON_FORCE_OBJECT)]));
+			    $survey->answers()->save(new Answer([
+			        'answer' => json_encode($new_response,JSON_FORCE_OBJECT),
+                    'respondent' => $request->cookie('survey_for_view_user')
+                ]));
 			}
 			if ($finish==0) {
 				return redirect('survey/view/'.$id.'?page='.($page+1));
 
 			}else{
+                Cookie::queue(Cookie::forget('survey_for_view_user'));
 				return redirect('survey/thank-you/'.$id);
 			}
 		}
