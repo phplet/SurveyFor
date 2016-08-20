@@ -1,17 +1,9 @@
 @extends('layouts.master')
 
-@section('body_content')
+@section('content')
 
     <div class="container topety">
         <div class="row">
-            <div class="col-md-12">
-                <!--breadcrumbs start -->
-                <ul class="breadcrumb">
-                    <li class="active">Home</li>
-                    <li>{{ link_to('surveys/create', 'Create Survey') }}</li>
-                </ul>
-                <!--breadcrumbs end -->
-            </div>
             <div class="col-md-3">
                 <div class="panel" id="profile-nav">
                     {{ link_to('surveys/create', 'Create New', array('class'=>'btn btn-primary btn-lg', 'role'=>'button', 'style'=>'width: 92%;margin: 4%;')) }}
@@ -44,8 +36,7 @@
                                 <hr class="hr"/>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default"><a
-                                                href="/survey/view/{{ $survey->id }}" target="_blank">View in
-                                            Browser</a></button>
+                                                href="/survey/view/{{ $survey->id }}" target="_blank">Preview</a></button>
                                     @if ($survey->status === 1)
                                         <button type="button" class="btn btn-default"><a
                                                     href="/survey/unpublish/{{ $survey->id }}">Unpublish</a>

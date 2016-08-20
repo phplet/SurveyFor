@@ -1,19 +1,9 @@
 @extends('layouts.master')
 
-@section('body_content')
+@section('content')
 
 <div class="container topety">
   <div class="row">
-    <div class="col-md-12">
-      <!--breadcrumbs start -->
-      <ul class="breadcrumb">
-          <li>{{ link_to('/', 'Home') }}</li>
-          @if($survey->status === 0)
-            <li>{{ link_to('/survey/add_question/'.$survey->id, 'Add Question') }}</li>
-          @endif
-      </ul>
-      <!--breadcrumbs end -->
-    </div>
     <div class="col-md-3">
       <div class="panel panel-default settings-border min-set">
         <div class="panel-body">

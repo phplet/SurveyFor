@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('body_content')
+@section('content')
 <div class="jumbotron" style="background: #fff">
   <div class="container">
     <div id="row">

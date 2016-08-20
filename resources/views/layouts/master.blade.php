@@ -78,7 +78,7 @@
             </div>
 
             <div>
-                @yield('body_content')
+                @yield('content')
             </div>
 
             <div>

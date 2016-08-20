@@ -14,11 +14,11 @@ Route::auth();
 
 Route::pattern('id', '[0-9]+');
 
-Route::get('/', array(
-    'as'=>'default', 'uses' =>'HomeController@index'
-));
-
 Route::group(['middleware' => 'auth'], function () {
+
+    Route::get('/', array(
+        'as'=>'default', 'uses'=>'SurveyController@index'
+    ));
 
     Route::get('surveys', array(
         'as'=>'surveys',

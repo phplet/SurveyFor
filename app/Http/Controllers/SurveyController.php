@@ -126,8 +126,12 @@ class SurveyController extends BaseController {
 
 	public function view_survey(Request $request, $id)
 	{
+	    $status_compare = "=";
+	    if(Auth::check())
+	        $status_compare = "!=";
+
         $survey = Survey::where('id', '=', $id)
-            ->where('status', '=', 1)->first();
+            ->where('status', $status_compare, 1)->first();
 		if (count($survey) != 0) {
             $question = $survey->questions()->paginate(1);
 			if ( $request->get('page', 1) > $question->lastPage() )
