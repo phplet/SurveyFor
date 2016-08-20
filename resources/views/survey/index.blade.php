@@ -8,13 +8,13 @@
                 <!--breadcrumbs start -->
                 <ul class="breadcrumb">
                     <li class="active">Home</li>
-                    <li>{{ link_to('survey/create', 'Create Survey') }}</li>
+                    <li>{{ link_to('surveys/create', 'Create Survey') }}</li>
                 </ul>
                 <!--breadcrumbs end -->
             </div>
             <div class="col-md-3">
                 <div class="panel" id="profile-nav">
-                    {{ link_to('survey/create', 'Create New', array('class'=>'btn btn-primary btn-lg', 'role'=>'button', 'style'=>'width: 92%;margin: 4%;')) }}
+                    {{ link_to('surveys/create', 'Create New', array('class'=>'btn btn-primary btn-lg', 'role'=>'button', 'style'=>'width: 92%;margin: 4%;')) }}
                     <div class="panel-body no-padding">
                         <ul class="nav nav-pills nav-stacked mail-nav no-rad">
                             <li><a href="#">All <span class="badge pull-right">{{ $counts->get('all') }}</span></a></li>

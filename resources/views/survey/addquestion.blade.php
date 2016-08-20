@@ -8,7 +8,7 @@
       <!--breadcrumbs start -->
       <ul class="breadcrumb">
           <li><a href="/">Home</a></li>
-          <li><a href="/survey/create">Create Survey</a></li>
+          <li><a href="/surveys/create">Create Survey</a></li>
           <li class="active">Add Question</li>
       </ul>
       <!--breadcrumbs end -->

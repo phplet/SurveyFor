@@ -26,7 +26,7 @@ class HomeController extends BaseController
     {
         if (Auth::check())
         {
-            return redirect()->route('profile');
+            return redirect()->route('surveys');
         }else{
             return view('index');
         }

@@ -18,18 +18,19 @@ Route::get('/', array(
     'as'=>'default', 'uses' =>'HomeController@index'
 ));
 
-Route::get('survey/thank-you/{id}', array(
-    'uses'=>'SurveyController@thankyou'
-));
-
 Route::group(['middleware' => 'auth'], function () {
 
-    Route::get('survey/create', array(
+    Route::get('surveys', array(
+        'as'=>'surveys',
+        'uses'=>'SurveyController@index'
+    ));
+
+    Route::get('surveys/create', array(
         'as'=>'createsurvey',
         'uses'=>'SurveyController@create'
     ));
 
-    Route::post('survey/create', array(
+    Route::post('surveys/create', array(
         'uses'=>'SurveyController@insert'
     ));
 
@@ -54,11 +55,6 @@ Route::group(['middleware' => 'auth'], function () {
         'uses'=>'SurveyController@add_question'
     ));
 
-    Route::get('users/profile/', array(
-        'as'=>'profile',
-        'uses'=>'UserController@profile'
-    ));
-
     Route::get('survey/settings/{id}', array(
         'uses'=>'SurveyController@settings'
     ));
@@ -70,4 +66,8 @@ Route::post('survey/view/{id}', array(
 
 Route::get('survey/view/{id}', array(
     'uses'=>'SurveyController@view_survey'
+));
+
+Route::get('survey/thank-you/{id}', array(
+    'uses'=>'SurveyController@thankyou'
 ));

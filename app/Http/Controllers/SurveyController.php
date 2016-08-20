@@ -12,6 +12,20 @@ use Illuminate\Http\Request;
 
 class SurveyController extends BaseController {
 
+    public function index()
+    {
+        $surveys = Survey::where('user_id', '=', Auth::user()->id)->with('questions')->get();
+        $group_by_status = $surveys->groupBy('status');
+        $counts = collect([
+            "all" => $surveys->count(),
+            "published" => ($group_by_status->get(1)) ? $group_by_status->get(1)->count() : 0,
+            "unpublished" => ($group_by_status->get(2)) ? $group_by_status->get(2)->count() : 0,
+            "notpublished" => ($group_by_status->get(0)) ? $group_by_status->get(0)->count() : 0
+        ]);
+
+        return view('survey.index', compact('surveys', 'counts'));
+    }
+
 	public function create(Request $request)
 	{
         return view('survey.create', ['title' => 'Create new Survey']);
@@ -35,7 +49,7 @@ class SurveyController extends BaseController {
                 'title' => $request->input('title'),
                 'description' => $request->input('description')
             ]));
-            return redirect()->route('profile');
+            return redirect()->route('surveys');
 		}
 	}
 
@@ -45,11 +59,11 @@ class SurveyController extends BaseController {
         $survey->status = 1;
 
         if ($survey->save()) {
-            return redirect()->route('profile')
+            return redirect()->route('surveys')
                 ->with('message', 'Your Survey has been successfully published')
                 ->with('class', 'alert-success');
         }else {
-            return redirect()->route('profile')
+            return redirect()->route('surveys')
                 ->with('message', 'An error occurred. Survey not published.')
                 ->with('class', 'alert-error');
         }
@@ -61,11 +75,11 @@ class SurveyController extends BaseController {
         $survey->status = 2;
 
         if ($survey->save()) {
-            return redirect()->route('profile')
+            return redirect()->route('surveys')
                 ->with('message', 'Your Survey has been successfully Unpublished')
                 ->with('class', 'alert-success');
         }else {
-            return redirect()->route('profile')
+            return redirect()->route('surveys')
                 ->with('message', 'An error occurred. Survey not unpublished.')
                 ->with('class', 'alert-error');
         }
@@ -74,11 +88,11 @@ class SurveyController extends BaseController {
 	public function delete($id)
 	{
         if(Survey::destroy($id)) {
-            return redirect()->route('profile')
+            return redirect()->route('surveys')
                 ->with('message', 'Your Survey has been successfully deleted')
                 ->with('class', 'alert-success');
         }else {
-            return redirect()->route('profile')
+            return redirect()->route('surveys')
                 ->with('message', 'An error occurred. Survey not deleted.')
                 ->with('class', 'alert-error');
         }
@@ -120,7 +134,7 @@ class SurveyController extends BaseController {
 			{
 				if (Auth::check())
 				{
-				    return redirect('users/profile')
+				    return redirect()->route('surveys')
 						->with('message', '1. incorrect link. 2. Check to be sure there are questions for this survey.')
 						->with('class', 'alert-danger')
 						->with('title', 'Welcome to SurveyFor');
