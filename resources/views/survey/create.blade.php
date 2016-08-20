@@ -1,17 +1,9 @@
 @extends('layouts.master')
 
-@section('body_content')
+@section('content')
 
 <div class="container topety">
   <div class="row">
-    <div class="col-md-12">
-      <!--breadcrumbs start -->
-      <ul class="breadcrumb">
-          <li><a href="/">Home</a></li>
-          <li class="active">Create Survey</li>
-      </ul>
-      <!--breadcrumbs end -->
-    </div>
     <div class="col-md-6">
       <h1>Create Survey</h1>
       {{Form::open(array('url' => 'surveys/create', 'method' => 'post'))}}

@@ -1,18 +1,9 @@
 @extends('layouts.master')
 
-@section('body_content')
+@section('content')
 
 <div class="container topety">
   <div class="row">
-    <div class="col-md-12">
-      <!--breadcrumbs start -->
-      <ul class="breadcrumb">
-          <li><a href="/">Home</a></li>
-          <li><a href="/surveys/create">Create Survey</a></li>
-          <li class="active">Add Question</li>
-      </ul>
-      <!--breadcrumbs end -->
-    </div>
     <div class="col-md-6">
       @if($errors->has())
         @foreach ($errors->all() as $error)

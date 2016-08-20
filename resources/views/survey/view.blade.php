@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('body_content')
+@section('content')
 <div class="container topety">
   <div class="row">
     <div class="col-md-12">
