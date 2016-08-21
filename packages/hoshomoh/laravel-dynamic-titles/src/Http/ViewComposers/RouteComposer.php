@@ -15,7 +15,6 @@ class RouteComposer
      */
     public function __construct(Route $route)
     {
-        // Dependencies automatically resolved by service container...
         $this->route = $route;
     }
 
@@ -27,7 +26,7 @@ class RouteComposer
      */
     public function compose(View $view)
     {
-        var_dump($this->route->getName());
-        $view->with('title', "Awesome");
+        $title = !empty($view->getData()["title"]) ? $view->getData()["title"] : "";
+        $view->with('title', $title);
     }
 }

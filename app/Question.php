@@ -14,7 +14,7 @@ class Question extends Model {
 
 	public static $rule_two = array();
 
-	public static function validate($data){
+	public static function createQuestionValidator($data){
 		if (array_key_exists('option_name', $data)) {
 	        for ($i = 0; $i < count($data['option_name']); $i++) {
 	        	static::$rules["option_name.{$i}"] = 'required';
@@ -23,7 +23,7 @@ class Question extends Model {
 		return Validator::make($data, static::$rules);
 	}
 
-	public static function validate_two($data){
+	public static function answerQuestionValidator($data){
 		$messages = array(
 		    'required' => 'This field is required.',
 		);

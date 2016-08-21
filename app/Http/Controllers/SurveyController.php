@@ -12,10 +12,13 @@ use Illuminate\Http\Request;
 
 class SurveyController extends BaseController {
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index()
     {
-        $surveys = Survey::where('user_id', '=', Auth::user()->id)->with('questions')->get();
-        $group_by_status = $surveys->groupBy('status');
+        $surveys = Survey::where("user_id", "=", Auth::user()->id)->with("questions")->get();
+        $group_by_status = $surveys->groupBy("status");
         $counts = collect([
             "all" => $surveys->count(),
             "published" => ($group_by_status->get(1)) ? $group_by_status->get(1)->count() : 0,
@@ -23,108 +26,154 @@ class SurveyController extends BaseController {
             "notpublished" => ($group_by_status->get(0)) ? $group_by_status->get(0)->count() : 0
         ]);
 
-        return view('survey.index', compact('surveys', 'counts'));
+        return view("survey.index", compact("surveys", "counts"));
     }
 
-	public function create(Request $request)
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function create()
 	{
-        return view('survey.create', ['title' => 'Create new Survey']);
+        return view("survey.create", ["title" => "Create new Survey"]);
 	}
 
-	public function insert(Request $request)
+    /**
+     * @param Request $request
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function insert(Request $request)
 	{
 
         $validator = Validator::make($request->all(), [
-            'title' => 'required|max:60',
-            'description' => 'required|max:300'
+            "title" => "required|max:60",
+            "description" => "required|max:300"
         ]);
 
 		if ($validator->fails()) {
-		    return redirect()->route('createsurvey')
+		    return redirect()->route("createsurvey")
 				->withErrors($validator)
 				->withInput();
 		}
 		else{
 		    Auth::user()->surveys()->save(new Survey([
-                'title' => $request->input('title'),
-                'description' => $request->input('description')
+                "title" => $request->input("title"),
+                "description" => $request->input("description")
             ]));
-            return redirect()->route('surveys');
+            return redirect()->route("surveys");
 		}
 	}
 
-	public function publish($id)
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function publish($id)
 	{
 		$survey = Survey::find($id);
         $survey->status = 1;
 
         if ($survey->save()) {
-            return redirect()->route('surveys')
-                ->with('message', 'Your Survey has been successfully published')
-                ->with('class', 'alert-success');
+            return redirect()->route("surveys")
+                ->with([
+                    "message" => "Your Survey has been successfully published.",
+                    "class" => "alert-success"
+                ]);
         }else {
-            return redirect()->route('surveys')
-                ->with('message', 'An error occurred. Survey not published.')
-                ->with('class', 'alert-error');
+            return redirect()->route("surveys")
+                ->with([
+                    "message" => "An error occurred. Survey not published.",
+                    "class" => "alert-error"
+                ]);
         }
 	}
 
-	public function unpublish($id)
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function unpublish($id)
 	{
         $survey = Survey::find($id);
         $survey->status = 2;
 
         if ($survey->save()) {
-            return redirect()->route('surveys')
-                ->with('message', 'Your Survey has been successfully Unpublished')
-                ->with('class', 'alert-success');
+            return redirect()->route("surveys")
+                ->with([
+                    "message" => "Your Survey has been successfully Unpublished.",
+                    "class" => "alert-success"
+                ]);
         }else {
-            return redirect()->route('surveys')
-                ->with('message', 'An error occurred. Survey not unpublished.')
-                ->with('class', 'alert-error');
+            return redirect()->route("surveys")
+                ->with([
+                    "message" => "An error occurred. Survey not unpublished.",
+                    "class" => "alert-error"
+                ]);
         }
 	}
 
-	public function delete($id)
+    /**
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function delete($id)
 	{
         if(Survey::destroy($id)) {
-            return redirect()->route('surveys')
-                ->with('message', 'Your Survey has been successfully deleted')
-                ->with('class', 'alert-success');
+            return redirect()->route("surveys")
+                ->with([
+                    "message" => "Your Survey has been successfully deleted.",
+                    "class" => "alert-success"
+                ]);
         }else {
-            return redirect()->route('surveys')
-                ->with('message', 'An error occurred. Survey not deleted.')
-                ->with('class', 'alert-error');
+            return redirect()->route("surveys")
+                ->with([
+                    "message" => "An error occurred. Survey not deleted.",
+                    "class" => "alert-error"
+                ]);
         }
 	}
 
-	public function add_question()
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function add_question()
 	{
-        return view('survey.addquestion', ['title' => 'Add question to your survey']);
+        return view("survey.addquestion", ["title" => "Add question to your survey."]);
 	}
 
-	public function insert_question(Request $request, $id)
+    /**
+     * @param Request $request
+     * @param $id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function insert_question(Request $request, $id)
 	{
         $survey = Survey::find($id);
-		$validator = Question::validate($request->all());
+		$validator = Question::createQuestionValidator($request->all());
 		if ($validator->fails()) {
-			$request->flashOnly('question');
-			return redirect('survey/add_question/'.$id)
+			$request->flashOnly("question");
+			return redirect("survey/add_question/".$id)
 				->withErrors($validator);
 		}
 		else{
             $survey->questions()->save(new Question([
-                'question' => $request->get('question'),
-                'question_type' => $request->get('question_type'),
-                'option_name' => json_encode($request->get('option_name'),JSON_FORCE_OBJECT)
+                "question" => $request->get("question"),
+                "question_type" => $request->get("question_type"),
+                "option_name" => json_encode($request->get("option_name"),JSON_FORCE_OBJECT)
             ]));
 			return redirect('survey/add_question/'.$id)
-				->with('message', 'Your question has been added successfully. Add another one or go back home')
-				->with('class', 'alert-success');
+				->with([
+				    "message" => "Your question has been added successfully. Add another one or go back home",
+                    "class" => "alert-success"
+                ]);
 		}
 	}
 
-	public function view_survey(Request $request, $id)
+    /**
+     * @param Request $request
+     * @param $id
+     * @return $this|\Illuminate\Http\RedirectResponse
+     */
+    public function view_survey(Request $request, $id)
 	{
 	    $status_compare = "=";
 	    if(Auth::check())
@@ -139,9 +188,11 @@ class SurveyController extends BaseController {
 				if (Auth::check())
 				{
 				    return redirect()->route('surveys')
-						->with('message', '1. incorrect link. 2. Check to be sure there are questions for this survey.')
-						->with('class', 'alert-danger')
-						->with('title', 'Welcome to SurveyFor');
+						->with([
+                            'title' => 'Welcome to SurveyFor',
+						    'message' => '1. incorrect link. 2. Check to be sure there are questions for this survey.',
+                            'class', 'alert-danger'
+                        ]);
 				}else{
 			    	App::abort(404);
 				}
@@ -150,31 +201,41 @@ class SurveyController extends BaseController {
                     Cookie::queue(Cookie::make('survey_for_view_user', md5(uniqid(rand(), true)), 1440));
                 }
 				return view('survey.view')
-					->with('title', $survey->title)
-					->with('survey', $survey)
-					->with('question', $question);
+					->with([
+					    "title" => $survey->title,
+                        "survey" => $survey,
+                        "question" =>$question
+                    ]);
 			}
 		}
 		else{
 			return view('survey.view')
-				->with('title', "Survey Not Found")
-				->with('survey', $survey);
+				->with([
+				    "title" => "Survey Not Found",
+                    "survey" => $survey
+                ]);
 		}
 
 	}
 
-	public function thankyou($id){
-		return view('survey.thank-you',  array(
-			'title' => 'Thank you for taking the survey | Powered by surveyFor'
-		));
-
+    /**
+     * @param $id
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function thankyou($id){
+		return view("survey.thank-you",  ["title" => "Thank you for taking the survey | Powered by surveyFor"]);
 	}
 
-	public function save_survey(Request $request, $id)
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function save_survey(Request $request, $id)
 	{
 		$page = $request->get('page');
 		$finish = $request->get('finish');
-		$validator = Question::validate_two($request->all());
+		$validator = Question::answerQuestionValidator($request->all());
 		if ($validator->fails()) {
 			foreach ($request->all() as $key => $value) {
 				if (is_array($value)) {
@@ -228,7 +289,11 @@ class SurveyController extends BaseController {
 		
 	}
 
-	public function settings($id)
+    /**
+     * @param $id
+     * @return $this
+     */
+    public function settings($id)
 	{
 		$survey = Survey::find($id);
 		return view('survey.settings')
