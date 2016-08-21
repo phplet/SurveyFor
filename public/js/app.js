@@ -26,10 +26,10 @@ $(document).ready(function(){
 	});
 	$(document).on('click','.chart',function(){
 		var get_data = $(this).attr('data-chart');
-		get_data = $.parseJSON(get_data); 
-		//Get context with jQuery - using jQuery's .get() method.
+		get_data = $.parseJSON(get_data);
+		$("#myChart").attr("height", 300);
+		$("#myChart").attr("width", 300);
 		var ctx = $("#myChart").get(0).getContext("2d");
-		//This will get the first returned node in the jQuery collection.
-        var myNewChart = new Chart(ctx).Pie(get_data);
+        new Chart(ctx).Pie(get_data);
 	});
 });

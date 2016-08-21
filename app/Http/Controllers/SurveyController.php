@@ -265,19 +265,24 @@ class SurveyController extends BaseController {
 			}
 		}else{
 		    $survey = Survey::find($id);
-			$previous_response = $survey->answers()->where('respondent', $request->cookie('survey_for_view_user'))->first();
-            $new_response = $request->except('_token','page','finish');
-			if (count($previous_response) != 0) {
-				$response_value = json_decode($previous_response->answer, true);
-				$updated_response = array_merge($response_value, $new_response);
-                $previous_response->answer = json_encode($updated_response,JSON_FORCE_OBJECT);
-                $previous_response->save();
-			}else{
-			    $survey->answers()->save(new Answer([
-			        'answer' => json_encode($new_response,JSON_FORCE_OBJECT),
-                    'respondent' => $request->cookie('survey_for_view_user')
-                ]));
-			}
+
+            // Only saves published surveys
+            if ($survey->status == 1) {
+                $previous_response = $survey->answers()->where('respondent', $request->cookie('survey_for_view_user'))->first();
+                $new_response = $request->except('_token', 'page', 'finish');
+                if (count($previous_response) != 0) {
+                    $response_value = json_decode($previous_response->answer, true);
+                    $updated_response = array_merge($response_value, $new_response);
+                    $previous_response->answer = json_encode($updated_response, JSON_FORCE_OBJECT);
+                    $previous_response->save();
+                } else {
+                    $survey->answers()->save(new Answer([
+                        'answer' => json_encode($new_response, JSON_FORCE_OBJECT),
+                        'respondent' => $request->cookie('survey_for_view_user')
+                    ]));
+                }
+            }
+
 			if ($finish==0) {
 				return redirect('survey/view/'.$id.'?page='.($page+1));
 
@@ -298,7 +303,6 @@ class SurveyController extends BaseController {
 		$survey = Survey::find($id);
 		return view('survey.settings')
 			->with(['title' => 'Settings', 'survey' => $survey]);
-		
 	}
 
 }
