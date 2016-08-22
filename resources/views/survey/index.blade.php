@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="panel" id="profile-nav">
-                    {{ link_to('surveys/create', 'Create New', array('class'=>'btn btn-primary btn-lg', 'role'=>'button', 'style'=>'width: 92%;margin: 4%;')) }}
+                    {{ link_to('survey/create', 'Create New', array('class'=>'btn btn-primary btn-lg', 'role'=>'button', 'style'=>'width: 92%;margin: 4%;')) }}
                     <div class="panel-body no-padding">
                         <ul class="nav nav-pills nav-stacked mail-nav no-rad">
                             <li><a href="#">All <span class="badge pull-right">{{ $counts->get('all') }}</span></a></li>
@@ -39,11 +39,11 @@
                                                 href="/survey/view/{{ $survey->id }}" target="_blank">Preview</a></button>
                                     @if ($survey->status === 1)
                                         <button type="button" class="btn btn-default"><a
-                                                    href="/survey/unpublish/{{ $survey->id }}">Unpublish</a>
+                                                    href="/survey/{{ $survey->id }}/un-publish">Un-Publish</a>
                                         </button>
                                     @elseif ($survey->status === 0)
                                         <button type="button" class="btn btn-default"><a
-                                                    href="/survey/publish/{{ $survey->id }}">publish</a></button>
+                                                    href="/survey/{{ $survey->id }}/publish">Publish</a></button>
                                     @else
                                     @endif
                                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">More Actions<span class="caret"></span>

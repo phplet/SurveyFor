@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col-md-6">
       <h1>Create Survey</h1>
-      {{Form::open(array('url' => 'surveys/create', 'method' => 'post'))}}
+      {{Form::open(array('url' => 'survey', 'method' => 'post'))}}
         <div class="form-group">
           <label for="title">Survey Title</label>
           {{ Form::text('title', null, array('class'=>'form-control', 'id'=>'title', 'placeholder'=>'Survey Title')) }}

@@ -13,10 +13,26 @@ use Illuminate\Http\Request;
 class SurveyController extends BaseController {
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * Instantiate a new SurveyController instance.
+     *
+     */
+    public function __construct()
+    {
+        $this->middleware('auth', ['except' => [
+            'save_survey',
+            'view_survey',
+            'thankyou'
+        ]]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        //
         $surveys = Survey::where("user_id", "=", Auth::user()->id)->with("questions")->get();
         $group_by_status = $surveys->groupBy("status");
         $counts = collect([
@@ -30,86 +46,43 @@ class SurveyController extends BaseController {
     }
 
     /**
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function create()
-	{
+    {
+        //
         return view("survey.create", ["title" => "Create new Survey"]);
-	}
+    }
 
     /**
-     * @param Request $request
-     * @return $this|\Illuminate\Http\RedirectResponse
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function insert(Request $request)
-	{
-
+    public function store(Request $request)
+    {
+        //
         $validator = Validator::make($request->all(), [
             "title" => "required|max:60",
             "description" => "required|max:300"
         ]);
 
-		if ($validator->fails()) {
-		    return redirect()->route("createsurvey")
-				->withErrors($validator)
-				->withInput();
-		}
-		else{
-		    Auth::user()->surveys()->save(new Survey([
+        if ($validator->fails()) {
+            return redirect()->route("survey.create")
+                ->withErrors($validator)
+                ->withInput();
+        }
+        else{
+            Auth::user()->surveys()->save(new Survey([
                 "title" => $request->input("title"),
                 "description" => $request->input("description")
             ]));
-            return redirect()->route("surveys");
-		}
-	}
-
-    /**
-     * @param $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function publish($id)
-	{
-		$survey = Survey::find($id);
-        $survey->status = 1;
-
-        if ($survey->save()) {
-            return redirect()->route("surveys")
-                ->with([
-                    "message" => "Your Survey has been successfully published.",
-                    "class" => "alert-success"
-                ]);
-        }else {
-            return redirect()->route("surveys")
-                ->with([
-                    "message" => "An error occurred. Survey not published.",
-                    "class" => "alert-error"
-                ]);
+            return redirect()->route("survey.index");
         }
-	}
-
-    /**
-     * @param $id
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function unpublish($id)
-	{
-        $survey = Survey::find($id);
-        $survey->status = 2;
-
-        if ($survey->save()) {
-            return redirect()->route("surveys")
-                ->with([
-                    "message" => "Your Survey has been successfully Unpublished.",
-                    "class" => "alert-success"
-                ]);
-        }else {
-            return redirect()->route("surveys")
-                ->with([
-                    "message" => "An error occurred. Survey not unpublished.",
-                    "class" => "alert-error"
-                ]);
-        }
-	}
+    }
 
     /**
      * @param $id
@@ -304,5 +277,54 @@ class SurveyController extends BaseController {
 		return view('survey.settings')
 			->with(['title' => 'Settings', 'survey' => $survey]);
 	}
+
+
+    /**
+     * @param $survey
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function publish($survey)
+    {
+        $survey = Survey::find($survey);
+        $survey->status = 1;
+
+        if ($survey->save()) {
+            return redirect()->route("survey.index")
+                ->with([
+                    "message" => "Your Survey has been successfully published.",
+                    "class" => "alert-success"
+                ]);
+        }else {
+            return redirect()->route("survey.index")
+                ->with([
+                    "message" => "An error occurred. Survey not published.",
+                    "class" => "alert-error"
+                ]);
+        }
+    }
+
+    /**
+     * @param $survey
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function unPublish($survey)
+    {
+        $survey = Survey::find($survey);
+        $survey->status = 2;
+
+        if ($survey->save()) {
+            return redirect()->route("survey.index")
+                ->with([
+                    "message" => "Your Survey has been successfully Unpublished.",
+                    "class" => "alert-success"
+                ]);
+        }else {
+            return redirect()->route("survey.index")
+                ->with([
+                    "message" => "An error occurred. Survey not unpublished.",
+                    "class" => "alert-error"
+                ]);
+        }
+    }
 
 }
