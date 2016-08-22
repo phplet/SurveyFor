@@ -164,6 +164,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        hoshomoh\LaravelDynamicTitles\LaravelDynamicTitlesServiceProvider::class,
+        JeroenG\Packager\PackagerServiceProvider::class,
+
     ],
 
     /*
