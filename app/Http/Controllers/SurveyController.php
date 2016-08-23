@@ -196,14 +196,6 @@ class SurveyController extends BaseController {
 	}
 
     /**
-     * @param $id
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function thankyou($id){
-		return view("survey.thank-you",  ["title" => "Thank you for taking the survey | Powered by surveyFor"]);
-	}
-
-    /**
      * @param Request $request
      * @param $id
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
@@ -265,21 +257,10 @@ class SurveyController extends BaseController {
 
 			}else{
                 Cookie::queue(Cookie::forget('survey_for_view_user'));
-				return redirect('survey/thank-you/'.$id);
+				return redirect('survey/'.$id.'/thank-you');
 			}
 		}
 		
-	}
-
-    /**
-     * @param $id
-     * @return $this
-     */
-    public function settings($id)
-	{
-		$survey = Survey::find($id);
-		return view('survey.settings')
-			->with(['title' => 'Settings', 'survey' => $survey]);
 	}
 
 
@@ -329,6 +310,24 @@ class SurveyController extends BaseController {
                     "class" => "alert-error"
                 ]);
         }
+    }
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function completed(){
+        return view("survey.thank-you",  ["title" => "Thank you for taking the survey | Powered by surveyFor"]);
+    }
+
+
+    /**
+     * @param Survey $survey
+     * @return $this
+     */
+    public function results(Survey $survey)
+    {
+        return view('survey.results')
+            ->with(['title' => $survey->title . ' Results', 'survey' => $survey]);
     }
 
 }

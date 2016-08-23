@@ -31,7 +31,7 @@
                         @foreach($surveys as $survey)
                             <div class="well">
                                 <h4><a target="_blank"
-                                       href="/survey/settings/{{ $survey->id }}">{{ $survey->title }}</a></h4>
+                                       href="/survey/{{ $survey->id }}/results">{{ $survey->title }}</a></h4>
                                 <p>{{ $survey->description }}</p>
                                 <hr class="hr"/>
                                 <div class="btn-group">

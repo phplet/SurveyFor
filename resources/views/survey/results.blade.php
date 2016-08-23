@@ -4,142 +4,125 @@
 
 <div class="container topety">
   <div class="row">
-    <div class="col-md-3">
-      <div class="panel panel-default settings-border min-set">
-        <div class="panel-body">
-        </div>
-      </div>
-    </div>
-    <div class="col-md-9">
+    <div class="col-md-12">
       <div class="panel panel-default settings-border min-set">
         <div class="panel-heading">{{$survey->title}}</div>
           <div class="panel-body">
-            <ul class="nav nav-tabs" id="myTab">
-              <li class="active"><a href="#question" data-toggle="tab">Questions</a></li>
-              <li><a href="#settings" data-toggle="tab">Settings</a></li>
-            </ul>
-
-            <div class="tab-content">
-              <div class="tab-pane active" id="question">
-                <div class="panel-group toptwen" id="accordion">
-                  @foreach ($survey->questions as $question)
-                    <div class="panel panel-default">
-                      <div class="panel-heading">
-                        <h4 class="panel-title">
-                          <a data-toggle="collapse" data-parent="#accordion" href="#thequestion{{$question->id}}">
-                            {{$question->question}}
-                          </a>
-                        </h4>
-                      </div>
-                      <div id="thequestion{{$question->id}}" class="panel-collapse collapse">
-                        <div class="panel-body">
-                          <div class="row">
-                            <div class="col-md-6">
-                              <ul class="list-group">
+            <div class="panel-group toptwen" id="accordion">
+              @foreach ($survey->questions as $question)
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a data-toggle="collapse" data-parent="#accordion" href="#thequestion{{$question->id}}">
+                        {{$question->question}}
+                      </a>
+                    </h4>
+                  </div>
+                  <div id="thequestion{{$question->id}}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <ul class="list-group">
+                            @foreach ($survey->answers as $answer)
+                              @if ($question->question_type == "text")
+                                <?php
+                                $new_answer = json_decode($answer->answer);
+                                $concat = 'question'.$question->id;
+                                ?>
+                                <li class="list-group-item">
+                                  {{$new_answer->$concat}}
+                                </li>
+                              @elseif ($question->question_type == "textarea")
+                                <?php
+                                $new_answer = json_decode($answer->answer);
+                                $concat = 'question'.$question->id;
+                                ?>
+                                <li class="list-group-item">
+                                  {{$new_answer->$concat}}
+                                </li>
+                              @endif
+                            @endforeach
+                            @if($question->question_type == "radio")
+                              <?php
+                              $theoption = json_decode($question->option_name);
+                              $chart_data = array();
+                              ?>
+                              @foreach ($theoption as $key => $value)
+                                <?php $key = 0; ?>
                                 @foreach ($survey->answers as $answer)
-                                  @if ($question->question_type == "text")
-                                    <?php 
-                                      $new_answer = json_decode($answer->answer);
-                                      $concat = 'question'.$question->id;
-                                    ?>
-                                      <li class="list-group-item">
-                                        {{$new_answer->$concat}}
-                                      </li>
-                                  @elseif ($question->question_type == "textarea")
-                                    <?php 
-                                      $new_answer = json_decode($answer->answer);
-                                      $concat = 'question'.$question->id;
-                                    ?>
-                                    <li class="list-group-item">
-                                      {{$new_answer->$concat}}
-                                    </li>
+                                  <?php
+                                  $new_answer = json_decode($answer->answer);
+                                  $concat = 'question'.$question->id;
+                                  $value_check = $new_answer->$concat;
+                                  ?>
+                                  @if($value_check === $value)
+                                    <?php $key++; ?>
                                   @endif
                                 @endforeach
-                                @if($question->question_type == "radio")
+                                @if($key != 0)
                                   <?php
-                                    $theoption = json_decode($question->option_name);
-                                    $chart_data = array();
+                                  $present_data = array();
+                                  $present_data['value'] = $key;
+                                  $present_data['color'] = '#'.dechex(rand(0x000000, 0xFFFFFF));
+                                  array_push($chart_data,$present_data);
                                   ?>
-                                  @foreach ($theoption as $key => $value)
-                                    <?php $key = 0; ?>
-                                    @foreach ($survey->answers as $answer)
-                                      <?php 
-                                        $new_answer = json_decode($answer->answer);
-                                        $concat = 'question'.$question->id;
-                                        $value_check = $new_answer->$concat;
-                                      ?>
-                                      @if($value_check === $value)
-                                        <?php $key++; ?>
-                                      @endif
-                                    @endforeach
-                                    @if($key != 0)
-                                    <?php 
-                                      $present_data = array();
-                                      $present_data['value'] = $key;
-                                      $present_data['color'] = '#'.dechex(rand(0x000000, 0xFFFFFF));
-                                      array_push($chart_data,$present_data);
-                                     ?>
-                                    @endif
-                                    <li class="list-group-item">
-                                      <span class="badge">{{$key}}</span>
-                                      {{$value}}
-                                    </li> 
-                                  @endforeach
-                                  <br>
-                                  <button class="chart btn btn-primary btn-lg" data-chart='{{json_encode($chart_data)}}' data-toggle="modal" data-target="#myModal">
-                                    Visualise
-                                  </button>
                                 @endif
-                                @if($question->question_type == "checkbox")
-                                  <?php 
-                                    $theoption = json_decode($question->option_name);
-                                    $chart_data = array();
+                                <li class="list-group-item">
+                                  <span class="badge">{{$key}}</span>
+                                  {{$value}}
+                                </li>
+                              @endforeach
+                              <br>
+                              <button class="chart btn btn-primary btn-lg" data-chart='{{json_encode($chart_data)}}' data-toggle="modal" data-target="#myModal">
+                                Visualise
+                              </button>
+                            @endif
+                            @if($question->question_type == "checkbox")
+                              <?php
+                              $theoption = json_decode($question->option_name);
+                              $chart_data = array();
+                              ?>
+                              @foreach ($theoption as $key => $value)
+                                <?php $key = 0; ?>
+                                @foreach ($survey->answers as $answer)
+                                  <?php
+                                  $new_answer = json_decode($answer->answer);
+                                  $concat = 'question'.$question->id;
+                                  $value_check = $new_answer->$concat;
                                   ?>
-                                  @foreach ($theoption as $key => $value)
-                                    <?php $key = 0; ?>
-                                    @foreach ($survey->answers as $answer)
-                                      <?php 
-                                        $new_answer = json_decode($answer->answer);
-                                        $concat = 'question'.$question->id;
-                                        $value_check = $new_answer->$concat;
-                                      ?>
-                                      @foreach($value_check as $k => $v)
-                                        @if($v === $value)
-                                          <?php $key++; ?>
-                                        @endif
-                                      @endforeach
-                                    @endforeach
-                                    @if($key != 0)
-                                    <?php 
-                                      $present_data = array();
-                                      $present_data['value'] = $key;
-                                      $present_data['color'] = '#'.dechex(rand(0x000000, 0xFFFFFF));
-                                      array_push($chart_data,$present_data);
-                                     ?>
+                                  @foreach($value_check as $k => $v)
+                                    @if($v === $value)
+                                      <?php $key++; ?>
                                     @endif
-                                    <li class="list-group-item">
-                                      <span class="badge">{{$key}}</span>
-                                      {{$value}}
-                                    </li>
                                   @endforeach
-                                  <br>
-                                  <button class="chart btn btn-primary btn-lg" data-chart='{{json_encode($chart_data)}}' data-toggle="modal" data-target="#myModal">
-                                    Visualise
-                                  </button>
+                                @endforeach
+                                @if($key != 0)
+                                  <?php
+                                  $present_data = array();
+                                  $present_data['value'] = $key;
+                                  $present_data['color'] = '#'.dechex(rand(0x000000, 0xFFFFFF));
+                                  array_push($chart_data,$present_data);
+                                  ?>
                                 @endif
-                              </ul>
-                            </div>
-                            <div class="col-md-6">
-                            </div>
-                          </div>
+                                <li class="list-group-item">
+                                  <span class="badge">{{$key}}</span>
+                                  {{$value}}
+                                </li>
+                              @endforeach
+                              <br>
+                              <button class="chart btn btn-primary btn-lg" data-chart='{{json_encode($chart_data)}}' data-toggle="modal" data-target="#myModal">
+                                Visualise
+                              </button>
+                            @endif
+                          </ul>
+                        </div>
+                        <div class="col-md-6">
                         </div>
                       </div>
                     </div>
-                  @endforeach
+                  </div>
                 </div>
-              </div>
-              <div class="tab-pane" id="settings">
-              </div>
+              @endforeach
             </div>
           </div>
         </div>

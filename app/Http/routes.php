@@ -27,10 +27,6 @@ Route::get('survey/add_question/{id}', array(
     'uses'=>'SurveyController@add_question'
 ));
 
-Route::get('survey/settings/{id}', array(
-    'uses'=>'SurveyController@settings'
-));
-
 Route::post('survey/view/{id}', array(
     'uses'=>'SurveyController@save_survey'
 ));
@@ -39,16 +35,20 @@ Route::get('survey/view/{id}', array(
     'uses'=>'SurveyController@view_survey'
 ));
 
-Route::get('survey/thank-you/{id}', array(
-    'uses'=>'SurveyController@thankyou'
-));
-
 Route::get('survey/{survey}/publish', array(
     'uses'=>'SurveyController@publish'
 ));
 
 Route::get('survey/{survey}/un-publish', array(
     'uses'=>'SurveyController@unPublish'
+));
+
+Route::get('survey/{survey}/thank-you', array(
+    'uses'=>'SurveyController@completed'
+));
+
+Route::get('survey/{survey}/results', array(
+    'uses'=>'SurveyController@results'
 ));
 
 Route::resource('survey', 'SurveyController');
