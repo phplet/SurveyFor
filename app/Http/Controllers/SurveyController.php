@@ -84,26 +84,30 @@ class SurveyController extends BaseController {
         }
     }
 
+
     /**
-     * @param $id
-     * @return \Illuminate\Http\RedirectResponse
+     * Remove the specified resource from storage.
+     *
+     * @param $survey
+     * @return \Illuminate\Http\Response
      */
-    public function delete($id)
-	{
-        if(Survey::destroy($id)) {
-            return redirect()->route("surveys")
+    public function destroy($survey)
+    {
+        //
+        if(Survey::destroy($survey)) {
+            return redirect()->route("survey.index")
                 ->with([
                     "message" => "Your Survey has been successfully deleted.",
                     "class" => "alert-success"
                 ]);
         }else {
-            return redirect()->route("surveys")
+            return redirect()->route("survey.index")
                 ->with([
                     "message" => "An error occurred. Survey not deleted.",
                     "class" => "alert-error"
                 ]);
         }
-	}
+    }
 
     /**
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View

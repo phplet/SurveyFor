@@ -18,10 +18,6 @@ Route::get('/', array(
     'as'=>'default', 'uses'=>'SurveyController@index'
 ));
 
-Route::get('survey/delete/{id}', array(
-    'uses'=>'SurveyController@delete'
-));
-
 Route::post('survey/add_question/{id}', array(
     'uses'=>'SurveyController@insert_question'
 ));

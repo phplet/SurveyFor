@@ -58,7 +58,12 @@
                                             <li><a href="#">Taken<span class="badge pull-right">0</span></a></li>
                                         @endif
                                         <li class="divider"></li>
-                                        <li><a href="/survey/delete/{{ $survey->id }}">Delete Survey</a></li>
+                                        <li>
+                                            {{Form::open(array('url' => 'survey/'.$survey->id, 'method' => 'post'))}}
+                                                <input type="hidden" name="_method" value="DELETE">
+                                                <input type="submit" value="Delete Survey" style="margin: 0px 14px;background: transparent;border: none;">
+                                            {{Form::close()}}
+                                        </li>
                                         @if ($survey->status === 0)
                                             <li><a href="/survey/add_question/{{ $survey->id }}">Add Question</a>
                                             </li>
